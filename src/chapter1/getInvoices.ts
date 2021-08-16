@@ -1,13 +1,9 @@
+import getAmount from './getAmount';
+
 import invoices from './invoices.json';
 import plays from './plays.json';
 
-type Invoice = typeof invoices[number];
-type Plays = {
-  [key: string]: {
-    name: string;
-    type: string;
-  };
-};
+import type {Invoice, Plays} from './type';
 
 const statement = (invoice: Invoice, plays: Plays) => {
   let totalAmount = 0;
@@ -21,25 +17,7 @@ const statement = (invoice: Invoice, plays: Plays) => {
 
   for (const perf of invoice.performances) {
     const play = plays[perf.playId];
-    let thisAmount = 0;
-
-    switch (play.type) {
-      case 'tragedy':
-        thisAmount = 40000;
-        if (perf.audience > 30) {
-          thisAmount += 1000 * (perf.audience - 30);
-        }
-        break;
-      case 'comedy':
-        thisAmount = 30000;
-        if (perf.audience > 20) {
-          thisAmount += 10000 + 500 * (perf.audience - 20);
-        }
-        thisAmount += 300 * perf.audience;
-        break;
-      default:
-        throw new Error(`Unknown play type: ${play.type}`);
-    }
+    const thisAmount = getAmount(perf, play);
 
     volumeCredits += Math.max(perf.audience - 30, 0);
     if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
