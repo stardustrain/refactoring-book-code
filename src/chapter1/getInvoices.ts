@@ -1,11 +1,10 @@
-import getAmount from './getAmount';
+import {getAmount, playFor, getVolumeCreditsFor} from './utils';
 
 import invoices from './invoices.json';
-import plays from './plays.json';
 
-import type {Invoice, Plays} from './type';
+import type {Invoice} from './type';
 
-const statement = (invoice: Invoice, plays: Plays) => {
+const statement = (invoice: Invoice) => {
   let totalAmount = 0;
   let volumeCredits = 0;
   let result = `Result (Customer: ${invoice.customer})\n`;
@@ -16,16 +15,12 @@ const statement = (invoice: Invoice, plays: Plays) => {
   }).format;
 
   for (const perf of invoice.performances) {
-    const play = plays[perf.playId];
-    const thisAmount = getAmount(perf, play);
+    volumeCredits += getVolumeCreditsFor(perf);
 
-    volumeCredits += Math.max(perf.audience - 30, 0);
-    if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
-
-    result += `${play.name}: ${format(thisAmount / 100)} (${
+    result += `${playFor(perf).name}: ${format(getAmount(perf) / 100)} (${
       perf.audience
     }석)\n`;
-    totalAmount += thisAmount;
+    totalAmount += getAmount(perf);
   }
 
   result += `total: ${format(totalAmount / 100)}\n`;
@@ -34,4 +29,4 @@ const statement = (invoice: Invoice, plays: Plays) => {
   return result;
 };
 
-console.info(statement(invoices[0], plays));
+console.info(statement(invoices[0]));
