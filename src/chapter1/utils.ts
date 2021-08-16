@@ -13,16 +13,6 @@ export const usd = (amount: number) =>
 export const playFor = (performance: Performance) =>
   (plays as Plays)[performance.playId];
 
-export const getVolumeCreditsFor = (performance: Performance) => {
-  let result = 0;
-  result += Math.max(performance.audience - 30, 0);
-  if (playFor(performance).type === 'comedy') {
-    result += Math.floor(performance.audience / 5);
-  }
-
-  return result;
-};
-
 export const getAmount = (performance: Performance) => {
   let result = 0;
   const play = playFor(performance);
@@ -43,6 +33,34 @@ export const getAmount = (performance: Performance) => {
       break;
     default:
       throw new Error(`Unknown play type: ${play.type}`);
+  }
+
+  return result;
+};
+
+const getVolumeCreditsFor = (performance: Performance) => {
+  let result = 0;
+  result += Math.max(performance.audience - 30, 0);
+  if (playFor(performance).type === 'comedy') {
+    result += Math.floor(performance.audience / 5);
+  }
+
+  return result;
+};
+
+export const getVolumeCredits = (performances: Performance[]) => {
+  let result = 0;
+  for (const perf of performances) {
+    result += getVolumeCreditsFor(perf);
+  }
+
+  return result;
+};
+
+export const getTotalAmount = (performances: Performance[]) => {
+  let result = 0;
+  for (const perf of performances) {
+    result += getAmount(perf);
   }
 
   return result;
