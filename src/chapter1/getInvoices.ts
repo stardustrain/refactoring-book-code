@@ -1,15 +1,10 @@
-import {
-  getAmount,
-  playFor,
-  getVolumeCreditsFor,
-  getVolumeCredits,
-  getTotalAmount,
-  usd,
-} from './utils';
+import {getStatementData, usd} from './utils';
 
 import invoices from './invoices.json';
+import plays from './plays.json';
 
-import type {Invoice} from './type';
+import type {Invoice, Plays} from './type';
+import type {StatementData} from './utils';
 
 const renderPlainText = (statementData: StatementData) => {
   const {customer, performances, totalAmount, totalVolumeCredits} =
@@ -26,22 +21,8 @@ const renderPlainText = (statementData: StatementData) => {
   return result;
 };
 
-type StatementData = ReturnType<typeof getStatementData>;
-const getStatementData = (invoice: Invoice) => ({
-  customer: invoice.customer,
-  performances: invoice.performances.map(performance => ({
-    ...performance,
-    play: playFor(performance),
-    amount: getAmount(performance),
-    volumeCredits: getVolumeCreditsFor(performance),
-  })),
-  totalAmount: getTotalAmount(invoice.performances),
-  totalVolumeCredits: getVolumeCredits(invoice.performances),
-});
-
-const statement = (invoice: Invoice) => {
-  const statementData = getStatementData(invoice);
-  return renderPlainText(statementData);
+const statement = (invoice: Invoice, plays: Plays) => {
+  return renderPlainText(getStatementData(invoice, plays));
 };
 
-console.info(statement(invoices[0]));
+console.info(statement(invoices[0], plays));
