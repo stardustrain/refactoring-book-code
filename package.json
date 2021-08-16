@@ -1,0 +1,32 @@
+{
+  "name": "refactoring-book-code",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/stardustrain/refactoring-book-code.git",
+  "author": "stardustrain <kthanterran@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
+    "@types/node": "^14.11.2",
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "3.3.0",
+    "gts": "^3.1.0",
+    "typescript": "^4.0.3"
+  },
+  "scripts": {
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint",
+    "commit": "cz"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
