@@ -21,8 +21,37 @@ const renderPlainText = (statementData: StatementData) => {
   return result;
 };
 
+const renderHtml = (statementData: StatementData) => {
+  const {customer, performances, totalAmount, totalVolumeCredits} =
+    statementData;
+
+  return `
+  <h1>Result (Customer: ${customer})</h1>
+  <table>
+    <thead>
+      <tr><th>연극</th><th>좌석수</th><th>금액</th></tr>
+    </thead>
+    <tbody>
+      ${performances
+        .map(
+          performance => `
+        <tr>
+          <td>${performance.play.name}</td>
+          <td>(${performance.audience}석)</td>
+          <td>${usd(performance.amount)}</td>
+        </tr>
+      `
+        )
+        .join('')}
+    </tbody>
+  </table>
+  <p>총액: <em>${usd(totalAmount)}</em></p>
+  <p>적립 포인트: <em>${usd(totalVolumeCredits)}</em>점</p>
+  `;
+};
+
 const statement = (invoice: Invoice, plays: Plays) => {
-  return renderPlainText(getStatementData(invoice, plays));
+  return renderHtml(getStatementData(invoice, plays));
 };
 
 console.info(statement(invoices[0], plays));
