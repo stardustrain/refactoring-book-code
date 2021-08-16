@@ -3,17 +3,24 @@ import type {Invoice, Plays} from './type';
 
 type Performance = Invoice['performances'][number];
 
+export const usd = (amount: number) =>
+  new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  }).format(amount / 100);
+
 export const playFor = (performance: Performance) =>
   (plays as Plays)[performance.playId];
 
 export const getVolumeCreditsFor = (performance: Performance) => {
-  let volumeCredits = 0;
-  volumeCredits += Math.max(performance.audience - 30, 0);
+  let result = 0;
+  result += Math.max(performance.audience - 30, 0);
   if (playFor(performance).type === 'comedy') {
-    volumeCredits += Math.floor(performance.audience / 5);
+    result += Math.floor(performance.audience / 5);
   }
 
-  return volumeCredits;
+  return result;
 };
 
 export const getAmount = (performance: Performance) => {

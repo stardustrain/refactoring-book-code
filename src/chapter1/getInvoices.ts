@@ -1,4 +1,4 @@
-import {getAmount, playFor, getVolumeCreditsFor} from './utils';
+import {getAmount, playFor, getVolumeCreditsFor, usd} from './utils';
 
 import invoices from './invoices.json';
 
@@ -8,22 +8,17 @@ const statement = (invoice: Invoice) => {
   let totalAmount = 0;
   let volumeCredits = 0;
   let result = `Result (Customer: ${invoice.customer})\n`;
-  const format = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-  }).format;
 
   for (const perf of invoice.performances) {
     volumeCredits += getVolumeCreditsFor(perf);
 
-    result += `${playFor(perf).name}: ${format(getAmount(perf) / 100)} (${
+    result += `${playFor(perf).name}: ${usd(getAmount(perf))} (${
       perf.audience
     }석)\n`;
     totalAmount += getAmount(perf);
   }
 
-  result += `total: ${format(totalAmount / 100)}\n`;
+  result += `total: ${usd(totalAmount)}\n`;
   result += `적립 포인트: ${volumeCredits}점\n`;
 
   return result;
