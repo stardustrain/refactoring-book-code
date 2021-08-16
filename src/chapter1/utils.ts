@@ -38,7 +38,7 @@ export const getAmount = (performance: Performance) => {
   return result;
 };
 
-const getVolumeCreditsFor = (performance: Performance) => {
+export const getVolumeCreditsFor = (performance: Performance) => {
   let result = 0;
   result += Math.max(performance.audience - 30, 0);
   if (playFor(performance).type === 'comedy') {
