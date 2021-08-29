@@ -27,11 +27,11 @@ Code smell의 유형
   - 함수의 본문에는 주석으로 설명하려던 코드가 담기고, **함수 이름은 동작 방식이 아닌 의도가 드러나게 짓는다**.
 - 핵심은 함수의 길이가 아닌, 함수의 목적(의도)과 구현 코드의 괴리가 얼마나 큰가이다.
   - 즉, "무엇을 하는지"를 코드가 잘 설명해주지 못할수록 함수로 만드는게 유리하다.
-- 함수를 짧게 만ㄷ는 작업의 대부분은 [함수 추출하기](함수추출하기)가 차지한다.
+- 함수를 짧게 만드는 작업의 대부분은 [함수 추출하기](함수추출하기)가 차지한다.
 - 함수가 매개변수와 임시변수를 많이 사용한다면 추출 작업에 방해가 된다.
   - [임시 변수를 질의 함수로 바꾸기](임시변수를질의함수로바꾸기)로 임시 변수의 수를, [매개변수 객체 만들기](매개변수객체만들기), [객체 통째로 넘기기](객체통째로넘기기)로는 매개변수의 수를 줄일 수 있다.
   - 위의 기법을 적용했음에도 여전히 임시변수와 매개변수가 많다면 [함수를 명령으로 바꾸기](함수를명령으로바꾸기)를 고려한다.
-- 추출할 코드 덩이리는 주석을 추적하면 좋다.
+- 추출할 코드 덩어리는 주석을 추적하면 좋다.
   - 보통 코드만으로 목적을 이해하기 어려운 부분에 주석이 있기 때문이다.
   - 주석이 설명하는 코드를 함수로 추출하고, 함수의 이름은 주석의 내용을 토대로 짓는다.
 - 조건문은 [조건문 분해하기](조건문분해하기)로 대응한다.
@@ -257,6 +257,38 @@ const report = reportGenerator.report(person);
 ## 2. 논의하고 싶은 것
 
 - `23. 상속포기`는 와닿지 않는다.
+- `여러 함수를 클래스로 묶기`는 직접 경험해 본 것이라 공감이 아주 잘되는거 같다.
+- `뒤엉킨 변경`, `산탄총 수술`은 component개발 시 많이 느낀 부분이다. 특히 mobile 대응할떄라든가...
+- `반복문을 파이프라인으로 바꾸기`는 정말 추천해주고 싶은 방법이다. 경험상 '어떻게'하는지를 작성하는 것 보다 '무엇을'하는지를 작성하는 것이 다른사람이 쉽게 이해하는 거 같았다. 내 기준으로 회사의 코드를 약간 refactoring 해보자면 다음과 같이 할거 같다.
+
+  ```ts
+  generateOrgCode(): string {
+    const codeLength = 3;
+    const alphabets = 'ABCDEFGHJKLMNPQRSTUVWXYZ'.split('');
+    const generatedCode = Array.from(Array(codeLength))
+      .map(() => {
+        const index = Math.floor(Math.random() * alphabets.length);
+        return alphabets[index];
+      })
+      .join('');
+
+    return generatedCode;
+  }
+
+  // ====> Refactoring
+  const alphabets = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
+
+  const getRandomIndex = () => _.random(0, alphabets.length - 1)
+
+  const getRandomAlphabet = () => alphabets[getRandomIndex()]
+
+  const generateOrgCode = () => {
+    const ORG_CODE_LENGTH = 3;
+    const generatedCode = _.times(ORG_CODE_LENGTH, getRandomAlphabet)
+    return generatedCode.join('')
+  }
+  ```
+
 - 책에서도 전제하고 있긴 하지만 애초에 데이터를 immutable하게 다루면 일어나지 않을 일들이 있는거 같다.
 
 ## 3. 앞으로 진행되어야 할 후속작업
